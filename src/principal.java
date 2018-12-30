@@ -274,44 +274,22 @@ public class principal extends javax.swing.JFrame {
         lblEmpresa.setText(login.nomEmpresa);
     }//GEN-LAST:event_formWindowOpened
 
+    
+    public static String codigoEmpleado;
     private void tblEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblEmpleadosMouseClicked
         // TODO add your handling code here:
+       
         DefaultTableModel model = (DefaultTableModel) tblEmpleados.getModel();
         int selectRowIndex = tblEmpleados.getSelectedRow();
-        String codigoEmpleado = model.getValueAt(selectRowIndex, 0).toString();
-        codigo = codigoEmpleado;
-        try {
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-            Connection conn = con.conectar();
-            String sql = "SELECT rutaFotografia,ID_EMPRESA FROM ms_empleado WHERE codigo = '" + codigoEmpleado + "' AND ID_EMPRESA = (SELECT ID_EMPRESA FROM ms_empresa WHERE nombre = '" + login.nomEmpresa + "')";
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-            rs.next();
-            String rutaImg = rs.getString("rutaFotografia");
-            //   codigo = rs.getString("codigo");
-            idEmpresa = rs.getString("ID_EMPRESA");
-            System.out.println("" + idEmpresa);
-            URL url = new URL("http://irm.ddns.me:81/mayasorting" + rutaImg.substring(2));
-            //System.out.println("http://irm.ddns.me:81/mayasorting"+rutaImg.substring(2));
-            /*ImageIcon imagen = new ImageIcon(url);
-            Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(lblImg.getWidth(), lblImg.getHeight(), Image.SCALE_DEFAULT));
-            lblImg.setIcon(icono);
-            this.repaint();*/
-            //URLConnection conRemot = (URLConnection) url.openConnection();
-            //InputStream in = conRemot.getInputStream();
-            //ImageIcon imagen = new ImageIcon(in);
-            ///From Empleado
+         codigoEmpleado = model.getValueAt(selectRowIndex, 0).toString();
+        
+       // new empleado().datos(codigoEmpleado);
+        this.dispose();
+        new empleado().setVisible(true);
+       
             
-            new empleado().setVisible(true);
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
-        }
+      
+        
     }//GEN-LAST:event_tblEmpleadosMouseClicked
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed

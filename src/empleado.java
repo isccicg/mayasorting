@@ -23,12 +23,15 @@ import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -43,6 +46,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Admin
  */
+
 public class empleado extends javax.swing.JFrame {
     
     //Variables que ayudan a capturar, enrolar y verificar
@@ -281,7 +285,9 @@ public class empleado extends javax.swing.JFrame {
         }
         Reclutador.clear();
         lblImagenHuella.setIcon(null);
-        System.exit(0);
+       // System.exit(0);
+       this.dispose();
+       new menu().setVisible(true);
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -289,7 +295,16 @@ public class empleado extends javax.swing.JFrame {
         Iniciar();
         start();
         EstadoHuellas();
+        try {
+            carga();
+        } catch (SQLException ex) {
+            Logger.getLogger(empleado.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(empleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //dato();
         lblNombre.setText(login.nomEmpresa);
+        
         btnGuardar.setEnabled(false);
     }//GEN-LAST:event_formWindowOpened
 
@@ -589,6 +604,37 @@ public class empleado extends javax.swing.JFrame {
         firePropertyChange(TEMPLATE_PROPERTY, old, template);
     }
     ////////////////////////////////////////////////////////////////////
+    
+String codigoEmpleados;
+public String datos(String codigoEmpleado){
+    
+    codigoEmpleados =codigoEmpleado;
+    System.out.println("DATOS "+codigoEmpleado);         
+    
+    
+    return codigoEmpleado;
+}
+public void carga() throws SQLException, MalformedURLException{
+    System.out.println("IMAGEN"+principal.codigoEmpleado);
+    codigo =principal.codigoEmpleado;
+    PreparedStatement ps = null;
+            ResultSet rs = null;
+            Connection conn = con.conectar();
+            String sql = "SELECT rutaFotografia,ID_EMPRESA FROM ms_empleado WHERE codigo = '" + principal.codigoEmpleado + "' AND ID_EMPRESA = (SELECT ID_EMPRESA FROM ms_empresa WHERE nombre = '" + login.nomEmpresa + "')";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            rs.next();
+            String rutaImg = rs.getString("rutaFotografia");
+            idEmpresa = rs.getString("ID_EMPRESA");
+          //  codigo =rs.getString("codigo");
+            System.out.println("" + idEmpresa);
+            URL url = new URL("http://irm.ddns.me:81/mayasorting" + rutaImg.substring(2));
+            ImageIcon imagen = new ImageIcon(url);
+            Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(lblImg.getWidth(), lblImg.getHeight(), Image.SCALE_DEFAULT));
+            lblImg.setIcon(icono);
+            this.repaint(); 
+}
+
 
     ///////////////////////////// fin otros metodos
 
