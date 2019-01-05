@@ -276,25 +276,29 @@ public class principal extends javax.swing.JFrame {
 
     
     public static String codigoEmpleado;
+    public static String nombreEmpleado;
     private void tblEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblEmpleadosMouseClicked
         // TODO add your handling code here:
        
         DefaultTableModel model = (DefaultTableModel) tblEmpleados.getModel();
         int selectRowIndex = tblEmpleados.getSelectedRow();
-         codigoEmpleado = model.getValueAt(selectRowIndex, 0).toString();
-        
-       // new empleado().datos(codigoEmpleado);
+        codigoEmpleado = model.getValueAt(selectRowIndex, 0).toString();
+        nombreEmpleado = model.getValueAt(selectRowIndex, 1).toString()+" "+model.getValueAt(selectRowIndex, 2).toString()+" "+model.getValueAt(selectRowIndex, 3).toString();
+        //this.dispose();
+        //new empleado().setLocationRelativeTo(null);
+        //new empleado().setVisible(true);
+        empleado formEmpleado = new empleado();
+        formEmpleado.setLocationRelativeTo(null);
         this.dispose();
-        new empleado().setVisible(true);
-       
-            
-      
-        
+        formEmpleado.setVisible(true);  
     }//GEN-LAST:event_tblEmpleadosMouseClicked
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
         // TODO add your handling code here:
-        System.exit(0);
+        menu formMenu = new menu();
+        formMenu.setLocationRelativeTo(null);
+        this.setVisible(false);
+        formMenu.setVisible(true);
     }//GEN-LAST:event_btnCerrarActionPerformed
 
     private void btnMinimizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinimizarActionPerformed

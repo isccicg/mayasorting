@@ -96,6 +96,7 @@ public class empleado extends javax.swing.JFrame {
         rSPanelImage2 = new rojerusan.RSPanelImage();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -126,7 +127,7 @@ public class empleado extends javax.swing.JFrame {
             .addGap(0, 45, Short.MAX_VALUE)
         );
 
-        lblNombre.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
+        lblNombre.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblNombre.setForeground(new java.awt.Color(255, 255, 255));
         lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
@@ -273,21 +274,29 @@ public class empleado extends javax.swing.JFrame {
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
         // TODO add your handling code here:
-        System.exit(0);
+        stop();
+        principal formPrincipal = new principal();
+        formPrincipal.setLocationRelativeTo(null);
+        this.setVisible(false);
+        formPrincipal.setVisible(true);
+        
     }//GEN-LAST:event_btnCerrarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
         try {
             guardarHuella();
+            Reclutador.clear();
+            lblImagenHuella.setIcon(null);
+            stop();
+            principal formPrincipal = new principal();
+            formPrincipal.setLocationRelativeTo(null);
+            this.setVisible(false);
+            formPrincipal.setVisible(true);
         } catch (IOException ex) {
             Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Reclutador.clear();
-        lblImagenHuella.setIcon(null);
-       // System.exit(0);
-       this.dispose();
-       new menu().setVisible(true);
+       
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -303,7 +312,7 @@ public class empleado extends javax.swing.JFrame {
             Logger.getLogger(empleado.class.getName()).log(Level.SEVERE, null, ex);
         }
         //dato();
-        lblNombre.setText(login.nomEmpresa);
+        lblNombre.setText(principal.nombreEmpleado);
         
         btnGuardar.setEnabled(false);
     }//GEN-LAST:event_formWindowOpened
