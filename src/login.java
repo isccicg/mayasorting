@@ -351,7 +351,7 @@ public class login extends javax.swing.JFrame {
         try{
             cmbEmpresa.removeAllItems();
             Connection conn = con.conectar();
-            String sql = "SELECT nombre FROM ms_empresa";
+            String sql = "SELECT nombre FROM ms_empresa WHERE estatus = 1";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
             while(rs.next() == true)

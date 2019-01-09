@@ -153,6 +153,11 @@ public class menu extends javax.swing.JFrame {
         btnAsistencia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAsistencia.setName("btnAsistencia"); // NOI18N
         btnAsistencia.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAsistencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAsistenciaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -212,6 +217,14 @@ public class menu extends javax.swing.JFrame {
         // TODO add your handling code here:
         setExtendedState(ICONIFIED);
     }//GEN-LAST:event_btnMinimizarActionPerformed
+
+    private void btnAsistenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsistenciaActionPerformed
+        // TODO add your handling code here:
+        turno formTurno = new turno();
+        formTurno.setLocationRelativeTo(null);
+        this.setVisible(false);
+        formTurno.setVisible(true);
+    }//GEN-LAST:event_btnAsistenciaActionPerformed
 
     /**
      * @param args the command line arguments
