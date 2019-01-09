@@ -1,4 +1,42 @@
-
+//////////////////////////////////////////////////////////////////////////////////
+import com.digitalpersona.onetouch.DPFPDataPurpose;
+import com.digitalpersona.onetouch.DPFPFeatureSet;
+import com.digitalpersona.onetouch.DPFPGlobal;
+import com.digitalpersona.onetouch.DPFPSample;
+import com.digitalpersona.onetouch.DPFPTemplate;
+import com.digitalpersona.onetouch.capture.DPFPCapture;
+import com.digitalpersona.onetouch.capture.event.DPFPDataAdapter;
+import com.digitalpersona.onetouch.capture.event.DPFPDataEvent;
+import com.digitalpersona.onetouch.capture.event.DPFPErrorAdapter;
+import com.digitalpersona.onetouch.capture.event.DPFPErrorEvent;
+import com.digitalpersona.onetouch.capture.event.DPFPReaderStatusAdapter;
+import com.digitalpersona.onetouch.capture.event.DPFPReaderStatusEvent;
+import com.digitalpersona.onetouch.capture.event.DPFPSensorAdapter;
+import com.digitalpersona.onetouch.capture.event.DPFPSensorEvent;
+import com.digitalpersona.onetouch.processing.DPFPEnrollment;
+import com.digitalpersona.onetouch.processing.DPFPFeatureExtraction;
+import com.digitalpersona.onetouch.processing.DPFPImageQualityException;
+import com.digitalpersona.onetouch.verification.DPFPVerification;
+import com.digitalpersona.onetouch.verification.DPFPVerificationResult;
+//import static empleado.TEMPLATE_PROPERTY;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+////////////////////////////////////////////////////////////////////////////////////
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,6 +51,25 @@ import java.util.GregorianCalendar;
  * @author sistemas
  */
 public class reloj extends javax.swing.JFrame implements Runnable{
+    
+    
+    
+    
+    //Variables que ayudan a capturar, enrolar y verificar
+    private DPFPCapture Lector = DPFPGlobal.getCaptureFactory().createCapture();
+    private DPFPEnrollment Reclutador = DPFPGlobal.getEnrollmentFactory().createEnrollment();
+    private DPFPVerification Verificador = DPFPGlobal.getVerificationFactory().createVerification();
+    private DPFPTemplate template;
+    public static String TEMPLATE_PROPERTY = "template";
+    public DPFPFeatureSet featureinscripcion;
+    public DPFPFeatureSet featureverificacion;
+
+    /////////////////////////
+    conexionMysql con = new conexionMysql();
+    private Dimension dim;
+    String codigo;
+    String idEmpresa;
+    //////////////////////////////////
     
     /** Declaramos las variables que van a contener los resultados de salida */
     private String nomTurno;
@@ -393,6 +450,11 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         // TODO add your handling code here:
         lblTurno.setText(nomTurno);
         lblAcceso.setText(tipoAcceso);
+        
+        
+        Iniciar();
+        start();
+        EstadoHuellas();
     }//GEN-LAST:event_formWindowOpened
 
     /**
@@ -429,6 +491,299 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             }
         });
     }
+    
+    
+      /////////////////////////////////////////////// metodos runable
+    protected void Iniciar() {
+
+        Lector.addDataListener(new DPFPDataAdapter() {
+            public void dataAcquired(final DPFPDataEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        EnviarTexto("Huella Capturada");
+                        procesarCaptura(e.getSample());
+                    }
+                });
+            }
+        });
+
+        Lector.addReaderStatusListener(new DPFPReaderStatusAdapter() {
+            @Override
+            public void readerConnected(DPFPReaderStatusEvent dpfprs) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        EnviarTexto("Sensor de Huella Activado o conectado");
+                    }
+                });
+            }
+
+            @Override
+            public void readerDisconnected(DPFPReaderStatusEvent dpfprs) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        EnviarTexto("Sensor de Huella esta desactivado o no conectado");
+                    }
+                });
+            }
+        });
+
+        Lector.addSensorListener(new DPFPSensorAdapter() {
+            public void fingerTouched(final DPFPSensorEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        EnviarTexto("El dedo ha sido colocado sobre el lector de huella");
+                    }
+                });
+            }
+
+            public void fingerGone(final DPFPSensorAdapter e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        EnviarTexto("El dedo ha sido quitado del lector de huella");
+                    }
+                });
+            }
+        });
+
+        Lector.addErrorListener(new DPFPErrorAdapter() {
+            public void errorReader(final DPFPErrorEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        EnviarTexto("Error: " + e.getError());
+                    }
+                });
+            }
+        });
+
+    }
+    //////////////////////////////////////////
+    
+    
+     //////////////////////////////// otros metodos
+    public DPFPFeatureSet extraerCaracteristicas(DPFPSample sample, DPFPDataPurpose purpose) {
+        DPFPFeatureExtraction extractor = DPFPGlobal.getFeatureExtractionFactory().createFeatureExtraction();
+        try {
+            return extractor.createFeatureSet(sample, purpose);
+        } catch (DPFPImageQualityException e) {
+            return null;
+        }
+    }
+    /* Guarda los datos de la huella digital actual en la base de datos
+     */
+    public void guardarHuella() throws FileNotFoundException, IOException {
+        //Obtiene los datos del template de la huella actual
+        ByteArrayInputStream datosHuella = new ByteArrayInputStream(template.serialize());
+        Integer tamañoHuella = template.serialize().length;
+        try {
+            
+            Connection c = con.conectar(); //establece la conexion con la BD
+            String sql = "SELECT * FROM ms_empleado WHERE codigo = ? AND ID_EMPRESA = ?";
+
+            System.out.println("" + sql);
+            System.out.println("" + codigo);
+            System.out.println("" + idEmpresa);
+
+            PreparedStatement pstmt = c.prepareStatement(sql);
+            pstmt.setString(1, codigo);
+            pstmt.setString(2, idEmpresa);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                //read the data from ResultSet
+                PreparedStatement guardar = c.prepareStatement("UPDATE ms_empleado SET huella = ? WHERE codigo = ? AND ID_EMPRESA = ?");
+                guardar.setBinaryStream(1, datosHuella);
+                guardar.setString(2, codigo);
+                guardar.setString(3, idEmpresa);
+                guardar.execute();
+                guardar.close();
+
+                JOptionPane.showMessageDialog(null, "Huella Guardada Correctamente");
+            } else {
+                JOptionPane.showMessageDialog(null, "El empleado no existe");
+            }
+            rs.close();
+            pstmt.close();
+
+            con.desconectar();
+
+           // btnGuardar.setEnabled(false);
+            //btnVerificar.grabFocus();
+        } catch (SQLException ex) {
+            //Si ocurre un error lo indica en la consola
+            System.err.println("Error al guardar los datos de la huella." + ex);
+        } finally {
+            con.desconectar();
+        }
+    }
+    
+    ////////////////////////
+    /**
+     * Verifica la huella digital actual contra otra en la base de datos
+     */
+    public void identificarHuella() throws IOException {
+        try {
+            //Establece los valores para la sentencia SQL
+            Connection c = con.conectar();
+
+            //Obtiene todas las huellas de la bd
+            PreparedStatement identificarStmt = c.prepareStatement("SELECT nombre,huella FROM ms_empleado");
+            ResultSet rs = identificarStmt.executeQuery();
+
+            //Si se encuentra el nombre en la base de datos
+            while (rs.next()) {
+                //Lee la plantilla de la base de datos
+                byte templateBuffer[] = rs.getBytes("huella");
+                String nombre = rs.getString("nombre");
+                //Crea una nueva plantilla a partir de la guardada en la base de datos
+                DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
+                //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
+                setTemplate(referenceTemplate);
+                // Compara las caracteriticas de la huella recientemente capturda con la
+                // alguna plantilla guardada en la base de datos que coincide con ese tipo
+                DPFPVerificationResult result = Verificador.verify(featureverificacion, getTemplate());
+                //compara las plantilas (actual vs bd)
+                //Si encuentra correspondencia dibuja el mapa
+                //e indica el nombre de la persona que coincidió.
+                if (result.isVerified()) {
+                    //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
+                    JOptionPane.showMessageDialog(null, "Las huella capturada es de " + nombre, "Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+            }
+            //Si no encuentra alguna huella correspondiente al nombre lo indica con un mensaje
+            JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
+            setTemplate(null);
+        } catch (SQLException e) {
+            //Si ocurre un error lo indica en la consola
+            System.err.println("Error al identificar huella dactilar." + e.getMessage());
+        } finally {
+            con.desconectar();
+        }
+    }
+    
+    ////  esto es para verificar huella
+    public void procesarCaptura(DPFPSample sample) {
+
+        featureinscripcion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_ENROLLMENT);
+        featureverificacion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_VERIFICATION);
+
+//System.out.println(data);
+        if (featureinscripcion != null) {
+            try {
+
+                System.out.println("Las caracteristicas de la huella han sido creadas");
+                Reclutador.addFeatures(featureinscripcion);
+                Image image = CrearImagenHuella(sample);
+                DibujarHuella(image);
+
+                // System.out.println("dddd"+sample+""+featureinscripcion);
+                // btnVerificar.setEnabled(true);
+                //   btnIdentificar.setEnabled(true);
+            } catch (DPFPImageQualityException ex) {
+                System.err.println("Error: " + ex.getMessage());
+            } finally {
+                EstadoHuellas();
+                switch (Reclutador.getTemplateStatus()) {
+                    case TEMPLATE_STATUS_READY:
+                        stop();
+                        setTemplate(Reclutador.getTemplate());
+                        EnviarTexto("La plantilla de la huella ha sido creada, ya puede verificarla o identificarla");
+                        //           btnIdentificar.setEnabled(false);
+                        // btnVerificar.setEnabled(false);
+                 //       btnGuardar.setEnabled(true);
+                   //     btnGuardar.grabFocus();
+                        break;
+                    case TEMPLATE_STATUS_FAILED:
+                        Reclutador.clear();
+                        stop();
+                        EstadoHuellas();
+                        setTemplate(null);
+                        //mensaje avisando que falló la wea
+                        start();
+                        break;
+                }
+            }
+        }
+    }
+    
+    // verifica huella
+
+    public Image CrearImagenHuella(DPFPSample sample) {
+        return DPFPGlobal.getSampleConversionFactory().createImage(sample);
+    }
+
+    public void DibujarHuella(Image image) {
+        lblImagenHuella.setIcon(new ImageIcon(
+                image.getScaledInstance(lblImagenHuella.getWidth(), lblImagenHuella.getHeight(), image.SCALE_DEFAULT)
+        ));
+        repaint();
+    }
+
+    public void EstadoHuellas() {
+        EnviarTexto("Muestra de Huellas necesarias para Guardar Template: " + Reclutador.getFeaturesNeeded());
+    }
+
+    public void EnviarTexto(String string) {
+        txtArea.append(string + "\n");
+    }
+
+    public void start() {
+        Lector.startCapture();
+        EnviarTexto("Utilizando lector de huella");
+    }
+
+    public void stop() {
+        Lector.stopCapture();
+        EnviarTexto("No se está usando el lector de huella");
+    }
+
+    public DPFPTemplate getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(DPFPTemplate template) {
+        DPFPTemplate old = this.template;
+        this.template = template;
+        firePropertyChange(TEMPLATE_PROPERTY, old, template);
+    }
+    ////////////////////////////////////////////////////////////////////
+    
+String codigoEmpleados;
+public String datos(String codigoEmpleado){
+    
+    codigoEmpleados =codigoEmpleado;
+    System.out.println("DATOS "+codigoEmpleado);         
+    
+    
+    return codigoEmpleado;
+}
+public void carga() throws SQLException, MalformedURLException{
+    System.out.println("IMAGEN"+principal.codigoEmpleado);
+    codigo =principal.codigoEmpleado;
+    PreparedStatement ps = null;
+            ResultSet rs = null;
+            Connection conn = con.conectar();
+            String sql = "SELECT rutaFotografia,ID_EMPRESA FROM ms_empleado WHERE codigo = '" + principal.codigoEmpleado + "' AND ID_EMPRESA = (SELECT ID_EMPRESA FROM ms_empresa WHERE nombre = '" + login.nomEmpresa + "')";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            rs.next();
+            String rutaImg = rs.getString("rutaFotografia");
+            idEmpresa = rs.getString("ID_EMPRESA");
+          //  codigo =rs.getString("codigo");
+            System.out.println("" + idEmpresa);
+            URL url = new URL("http://irm.ddns.me:81/mayasorting" + rutaImg.substring(2));
+            ImageIcon imagen = new ImageIcon(url);
+         //   Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(lblImg.getWidth(), lblImg.getHeight(), Image.SCALE_DEFAULT));
+           // lblImg.setIcon(icono);
+            this.repaint(); 
+}
+
+
+    ///////////////////////////// fin otros metodos
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private rojeru_san.RSButtonRiple btnCerrar;

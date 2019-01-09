@@ -1,4 +1,4 @@
-
+//////////////////////////////////////////////////////////////////////////////////
 import com.digitalpersona.onetouch.DPFPDataPurpose;
 import com.digitalpersona.onetouch.DPFPFeatureSet;
 import com.digitalpersona.onetouch.DPFPGlobal;
@@ -35,7 +35,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-
+////////////////////////////////////////////////////////////////////////////////////
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -63,6 +63,10 @@ public class empleado extends javax.swing.JFrame {
     private Dimension dim;
     String codigo;
     String idEmpresa;
+    //////////////////////////////////
+    
+    
+    
     /**
      * Creates new form empleado
      */
