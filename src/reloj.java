@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
@@ -52,9 +53,6 @@ import java.util.GregorianCalendar;
  */
 public class reloj extends javax.swing.JFrame implements Runnable{
     
-    
-    
-    
     //Variables que ayudan a capturar, enrolar y verificar
     private DPFPCapture Lector = DPFPGlobal.getCaptureFactory().createCapture();
     private DPFPEnrollment Reclutador = DPFPGlobal.getEnrollmentFactory().createEnrollment();
@@ -74,6 +72,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
     /** Declaramos las variables que van a contener los resultados de salida */
     private String nomTurno;
     private String tipoAcceso;
+    Date date = new Date();
     int hora, minutos, segundos;
     Calendar calendario;
     Thread h1;
@@ -89,11 +88,6 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         setLocationRelativeTo(null);//para centrar la ventana
         setVisible(true);
     }
-    /*public reloj(String nomTurno, String tipoAcceso)
-    {
-        this.nomTurno = nomTurno;
-        this.tipoAcceso = tipoAcceso;
-    }*/
 
     private reloj() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -133,6 +127,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         rSPanelImage1 = new rojerusan.RSPanelImage();
         btnMinimizar = new rojeru_san.RSButtonRiple();
         btnCerrar = new rojeru_san.RSButtonRiple();
+        lblEmpresa = new javax.swing.JLabel();
         rSPanelsSlider3 = new rojeru_san.RSPanelsSlider();
         jPanel3 = new javax.swing.JPanel();
         rSPanelImage2 = new rojerusan.RSPanelImage();
@@ -190,6 +185,10 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             }
         });
 
+        lblEmpresa.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
+        lblEmpresa.setForeground(new java.awt.Color(255, 255, 255));
+        lblEmpresa.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -202,6 +201,11 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29))
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGap(398, 398, 398)
+                    .addComponent(lblEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(398, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -215,6 +219,11 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                     .addComponent(btnMinimizar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(lblEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         rSPanelsSlider2.add(jPanel2, "card2");
@@ -296,15 +305,12 @@ public class reloj extends javax.swing.JFrame implements Runnable{
 
         lblCodigo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblCodigo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblCodigo.setText("CÓDIGO");
 
         lblRfc.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblRfc.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblRfc.setText("RFC");
 
         lblNombre.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblNombre.setText("NOMBRE");
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
         jPanel6.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 112, 192), 5, true));
@@ -405,11 +411,11 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                         .addGap(71, 71, 71)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblCodigo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
-                        .addComponent(lblNombre)
-                        .addGap(77, 77, 77)
-                        .addComponent(lblRfc))
+                        .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(70, 70, 70)
+                        .addComponent(lblRfc, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblImagenHuella, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
                     .addComponent(jScrollPane2))
                 .addGap(29, 29, 29)
@@ -448,12 +454,16 @@ public class reloj extends javax.swing.JFrame implements Runnable{
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
+        
+        //Carga lo datos obtenidos de otro formulario
+        lblEmpresa.setText(login.nomEmpresa);
         lblTurno.setText(nomTurno);
         lblAcceso.setText(tipoAcceso);
         
-        
+        //Inicia Lector de Huella
         Iniciar();
         start();
+        //Muestra el estatus del Lector
         EstadoHuellas();
     }//GEN-LAST:event_formWindowOpened
 
@@ -493,10 +503,11 @@ public class reloj extends javax.swing.JFrame implements Runnable{
     }
     
     
-      /////////////////////////////////////////////// metodos runable
+    //Metodos runable (Eventos del Lector de Huella)
     protected void Iniciar() {
 
-        Lector.addDataListener(new DPFPDataAdapter() {
+        Lector.addDataListener(new DPFPDataAdapter() 
+        {
             public void dataAcquired(final DPFPDataEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
@@ -507,7 +518,8 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             }
         });
 
-        Lector.addReaderStatusListener(new DPFPReaderStatusAdapter() {
+        Lector.addReaderStatusListener(new DPFPReaderStatusAdapter() 
+        {
             @Override
             public void readerConnected(DPFPReaderStatusEvent dpfprs) {
                 SwingUtilities.invokeLater(new Runnable() {
@@ -529,7 +541,8 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             }
         });
 
-        Lector.addSensorListener(new DPFPSensorAdapter() {
+        Lector.addSensorListener(new DPFPSensorAdapter() 
+        {
             public void fingerTouched(final DPFPSensorEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -549,7 +562,8 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             }
         });
 
-        Lector.addErrorListener(new DPFPErrorAdapter() {
+        Lector.addErrorListener(new DPFPErrorAdapter() 
+        {
             public void errorReader(final DPFPErrorEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -578,7 +592,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
     public void guardarHuella() throws FileNotFoundException, IOException {
         //Obtiene los datos del template de la huella actual
         ByteArrayInputStream datosHuella = new ByteArrayInputStream(template.serialize());
-        Integer tamañoHuella = template.serialize().length;
+        //Integer tamañoHuella = template.serialize().length;
         try {
             
             Connection c = con.conectar(); //establece la conexion con la BD
@@ -620,24 +634,25 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         }
     }
     
-    ////////////////////////
     /**
      * Verifica la huella digital actual contra otra en la base de datos
      */
+    
     public void identificarHuella() throws IOException {
         try {
             //Establece los valores para la sentencia SQL
             Connection c = con.conectar();
-
-            //Obtiene todas las huellas de la bd
-            PreparedStatement identificarStmt = c.prepareStatement("SELECT nombre,huella FROM ms_empleado");
+            PreparedStatement identificarStmt = c.prepareStatement("SELECT ID_EMPLEADO,codigo,nombre,apellidoPaterno AS ap,apellidoMaterno AS am,rfc,huella FROM ms_empleado");
             ResultSet rs = identificarStmt.executeQuery();
 
             //Si se encuentra el nombre en la base de datos
             while (rs.next()) {
                 //Lee la plantilla de la base de datos
                 byte templateBuffer[] = rs.getBytes("huella");
-                String nombre = rs.getString("nombre");
+                String idEmpleado = rs.getString("ID_EMPLEADO");
+                String codigo = rs.getString("codigo");
+                String nombre = rs.getString("nombre")+" "+rs.getString("ap")+" "+rs.getString("am");
+                String rfc = rs.getString("rfc");
                 //Crea una nueva plantilla a partir de la guardada en la base de datos
                 DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
                 //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
@@ -648,10 +663,32 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 //compara las plantilas (actual vs bd)
                 //Si encuentra correspondencia dibuja el mapa
                 //e indica el nombre de la persona que coincidió.
-                if (result.isVerified()) {
+                if (result.isVerified()) 
+                {
+                    lblCodigo.setText(codigo);
+                    lblNombre.setText(nombre);
+                    lblRfc.setText(rfc);
+                    String nowDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                    
+                    if("Entrada".equals(tipoAcceso))
+                    {
+                        String sql = "SELECT * FROM ms_asistencia WHERE DATE(horaInicio) = '"+nowDate+"' AND ID_EMPLEADO = '"+idEmpleado+"'";
+                        System.out.println(sql);
+                        PreparedStatement pstmt = c.prepareStatement(sql);
+                        ResultSet rsAsistencia = pstmt.executeQuery();
+                        if (rsAsistencia.next() == true){
+                            
+                            sql = "INSERT INTO ms_asistencia(nombreTurno,horaHinicio,horaFin,ID_EMPLEADO,codigoUsuario) VALUES("+nomTurno+")";
+                        }
+                    }
+                    else if("Salida".equals(tipoAcceso))
+                    {
+                        
+                    }
+                    
                     //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
-                    JOptionPane.showMessageDialog(null, "Las huella capturada es de " + nombre, "Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
-                    return;
+                    //JOptionPane.showMessageDialog(null, "Las huella capturada es de " + nombre, "Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
+                    //return;
                 }
             }
             //Si no encuentra alguna huella correspondiente al nombre lo indica con un mensaje
@@ -671,8 +708,9 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         featureinscripcion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_ENROLLMENT);
         featureverificacion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_VERIFICATION);
 
-//System.out.println(data);
-        if (featureinscripcion != null) {
+        //System.out.println(data);
+        if (featureinscripcion != null) 
+        {
             try {
 
                 System.out.println("Las caracteristicas de la huella han sido creadas");
@@ -692,10 +730,16 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                         stop();
                         setTemplate(Reclutador.getTemplate());
                         EnviarTexto("La plantilla de la huella ha sido creada, ya puede verificarla o identificarla");
-                        //           btnIdentificar.setEnabled(false);
-                        // btnVerificar.setEnabled(false);
-                 //       btnGuardar.setEnabled(true);
-                   //     btnGuardar.grabFocus();
+                        try{
+                            identificarHuella();
+                        }
+                        catch (IOException ex) {
+                            Logger.getLogger(reloj.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        //btnIdentificar.setEnabled(false);
+                        //btnVerificar.setEnabled(false);
+                        //btnGuardar.setEnabled(true);
+                        //btnGuardar.grabFocus();
                         break;
                     case TEMPLATE_STATUS_FAILED:
                         Reclutador.clear();
@@ -761,7 +805,7 @@ public String datos(String codigoEmpleado){
     
     return codigoEmpleado;
 }
-public void carga() throws SQLException, MalformedURLException{
+/*public void carga() throws SQLException, MalformedURLException{
     System.out.println("IMAGEN"+principal.codigoEmpleado);
     codigo =principal.codigoEmpleado;
     PreparedStatement ps = null;
@@ -780,7 +824,7 @@ public void carga() throws SQLException, MalformedURLException{
          //   Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(lblImg.getWidth(), lblImg.getHeight(), Image.SCALE_DEFAULT));
            // lblImg.setIcon(icono);
             this.repaint(); 
-}
+}*/
 
 
     ///////////////////////////// fin otros metodos
@@ -799,6 +843,7 @@ public void carga() throws SQLException, MalformedURLException{
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblAcceso;
     private javax.swing.JLabel lblCodigo;
+    private javax.swing.JLabel lblEmpresa;
     private javax.swing.JLabel lblHora;
     private javax.swing.JLabel lblImagenHuella;
     private javax.swing.JLabel lblNombre;
