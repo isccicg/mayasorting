@@ -638,14 +638,35 @@ public void carga() throws SQLException, MalformedURLException{
             rs = ps.executeQuery();
             rs.next();
             String rutaImg = rs.getString("rutaFotografia");
+            
+            System.out.println("imagenenss"+rutaImg);
+            
+            
+              
+            
+           try{
+           
             idEmpresa = rs.getString("ID_EMPRESA");
           //  codigo =rs.getString("codigo");
             System.out.println("" + idEmpresa);
+            
             URL url = new URL("http://irm.ddns.me:81/mayasorting" + rutaImg.substring(2));
             ImageIcon imagen = new ImageIcon(url);
             Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(lblImg.getWidth(), lblImg.getHeight(), Image.SCALE_DEFAULT));
             lblImg.setIcon(icono);
             this.repaint(); 
+             
+            }
+           catch(Exception e){
+           
+                stop();
+        principal formPrincipal = new principal();
+        formPrincipal.setLocationRelativeTo(null);
+        this.setVisible(false);
+        formPrincipal.setVisible(true);
+          }      
+                
+           
 }
 
 

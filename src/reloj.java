@@ -512,7 +512,12 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         EnviarTexto("Huella Capturada");
-                        procesarCaptura(e.getSample());
+                        try {
+                            procesarCaptura(e.getSample());
+                            identificarHuella();
+                        } catch (IOException ex) {
+                            Logger.getLogger(reloj.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
             }
@@ -679,6 +684,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                         if (rsAsistencia.next() == true){
                             
                             sql = "INSERT INTO ms_asistencia(nombreTurno,horaHinicio,horaFin,ID_EMPLEADO,codigoUsuario) VALUES("+nomTurno+")";
+                            System.out.println(""+sql);
                         }
                     }
                     else if("Salida".equals(tipoAcceso))
@@ -713,7 +719,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         {
             try {
 
-                System.out.println("Las caracteristicas de la huella han sido creadas");
+                System.out.println("Las caracteristicas de la huella han sido creadas ");
                 Reclutador.addFeatures(featureinscripcion);
                 Image image = CrearImagenHuella(sample);
                 DibujarHuella(image);
@@ -723,7 +729,9 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 //   btnIdentificar.setEnabled(true);
             } catch (DPFPImageQualityException ex) {
                 System.err.println("Error: " + ex.getMessage());
-            } finally {
+            } 
+            
+           /*finally {
                 EstadoHuellas();
                 switch (Reclutador.getTemplateStatus()) {
                     case TEMPLATE_STATUS_READY:
@@ -731,6 +739,8 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                         setTemplate(Reclutador.getTemplate());
                         EnviarTexto("La plantilla de la huella ha sido creada, ya puede verificarla o identificarla");
                         try{
+                            
+                            ///no mal
                             identificarHuella();
                         }
                         catch (IOException ex) {
@@ -750,7 +760,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                         start();
                         break;
                 }
-            }
+            }*/
         }
     }
     
@@ -768,7 +778,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
     }
 
     public void EstadoHuellas() {
-        EnviarTexto("Muestra de Huellas necesarias para Guardar Template: " + Reclutador.getFeaturesNeeded());
+        EnviarTexto("Muestra de Huellas necesarias para Guardar Template: " + (Reclutador.getFeaturesNeeded()));
     }
 
     public void EnviarTexto(String string) {
