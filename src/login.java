@@ -259,6 +259,7 @@ public class login extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     public static String nomEmpresa;
+    public static String codUsuario;
     private void cmbEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbEmpresaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbEmpresaActionPerformed

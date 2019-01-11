@@ -517,6 +517,8 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                             identificarHuella();
                         } catch (IOException ex) {
                             Logger.getLogger(reloj.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(reloj.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 });
@@ -643,63 +645,133 @@ public class reloj extends javax.swing.JFrame implements Runnable{
      * Verifica la huella digital actual contra otra en la base de datos
      */
     
-    public void identificarHuella() throws IOException {
-        try {
+    public void identificarHuella() throws IOException, SQLException {
+        try 
+        {
             //Establece los valores para la sentencia SQL
+            String sql, idEmpleado, codigo, rfc,nombreEmpleado,horaInicio, horaFin, lun, mar, mie, jue, vie, sab, dom, minTolerancia;
+            PreparedStatement pstmt;
+            ResultSet rs;
             Connection c = con.conectar();
-            PreparedStatement identificarStmt = c.prepareStatement("SELECT ID_EMPLEADO,codigo,nombre,apellidoPaterno AS ap,apellidoMaterno AS am,rfc,huella FROM ms_empleado");
-            ResultSet rs = identificarStmt.executeQuery();
-
-            //Si se encuentra el nombre en la base de datos
-            while (rs.next()) {
-                //Lee la plantilla de la base de datos
+            
+            //Se extraen datos del empleado para comparar con la huella
+            sql = "SELECT ID_EMPLEADO,codigo,nombre,apellidoPaterno AS ap,apellidoMaterno AS am,rfc,huella FROM ms_empleado";
+            pstmt = c.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) 
+            {
+                //Datos empleado
+                idEmpleado = rs.getString("ID_EMPLEADO");
+                codigo = rs.getString("codigo");
+                nombreEmpleado = rs.getString("nombre")+" "+rs.getString("ap")+" "+rs.getString("am");
+                rfc = rs.getString("rfc");
                 byte templateBuffer[] = rs.getBytes("huella");
-                String idEmpleado = rs.getString("ID_EMPLEADO");
-                String codigo = rs.getString("codigo");
-                String nombre = rs.getString("nombre")+" "+rs.getString("ap")+" "+rs.getString("am");
-                String rfc = rs.getString("rfc");
+                
                 //Crea una nueva plantilla a partir de la guardada en la base de datos
                 DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
+                
                 //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
                 setTemplate(referenceTemplate);
+                
                 // Compara las caracteriticas de la huella recientemente capturda con la
                 // alguna plantilla guardada en la base de datos que coincide con ese tipo
                 DPFPVerificationResult result = Verificador.verify(featureverificacion, getTemplate());
+                
                 //compara las plantilas (actual vs bd)
                 //Si encuentra correspondencia dibuja el mapa
                 //e indica el nombre de la persona que coincidió.
                 if (result.isVerified()) 
                 {
-                    lblCodigo.setText(codigo);
-                    lblNombre.setText(nombre);
-                    lblRfc.setText(rfc);
-                    String nowDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
                     
-                    if("Entrada".equals(tipoAcceso))
-                    {
-                        String sql = "SELECT * FROM ms_asistencia WHERE DATE(horaInicio) = '"+nowDate+"' AND ID_EMPLEADO = '"+idEmpleado+"'";
-                        System.out.println(sql);
-                        PreparedStatement pstmt = c.prepareStatement(sql);
-                        ResultSet rsAsistencia = pstmt.executeQuery();
-                        if (rsAsistencia.next() == true){
-                            
-                            sql = "INSERT INTO ms_asistencia(nombreTurno,horaHinicio,horaFin,ID_EMPLEADO,codigoUsuario) VALUES("+nomTurno+")";
-                            System.out.println(""+sql);
-                        }
-                    }
-                    else if("Salida".equals(tipoAcceso))
+                    sql = "SELECT * FROM ms_turno WHERE nombre = '"+nomTurno+"'";
+                    pstmt = c.prepareStatement(sql);
+                    rs = pstmt.executeQuery();
+                    if(rs.next())
                     {
                         
                     }
+                    lblCodigo.setText(codigo);
+                    lblNombre.setText(nombreEmpleado);
+                    lblRfc.setText(rfc);
+                    String nowDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                    String nowDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
                     
-                    //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
-                    //JOptionPane.showMessageDialog(null, "Las huella capturada es de " + nombre, "Verificacion de Huella", JOptionPane.INFORMATION_MESSAGE);
-                    //return;
+                    //Valida si el empleado pertenece al turno
+                    sql = "SELECT * FROM ms_turno T0 LEFT JOIN ms_turnoempleado T1 ON T0.ID_TURNO = T1.ID_TURNO WHERE T0.nombre = '"+nomTurno+"' AND T1.ID_EMPLEADO = "+idEmpleado;
+                    System.out.println(sql);
+                    pstmt = c.prepareStatement(sql);
+                    rs = pstmt.executeQuery();
+                    if (rs.next() == true)
+                    {
+                        if("Entrada".equals(tipoAcceso))
+                        {
+                            //Valida si existe un registro con la fecha del día, antes de ingresar asistencia
+                            sql = "SELECT * FROM ms_asistencia WHERE DATE(horaInicio) = '"+nowDate+"' AND ID_EMPLEADO = '"+idEmpleado+"'";
+                            System.out.println(sql);
+                            pstmt = c.prepareStatement(sql);
+                            rs = pstmt.executeQuery();
+                            if (rs.next() == true){
+                                
+                                //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
+                            }
+                            else
+                            {
+                                sql = "INSERT INTO ms_asistencia(nombreTurno,horaInicio,horaFin,ID_EMPLEADO,codigoUsuario)";
+                                System.out.println(""+sql);
+                                PreparedStatement preparedStmt = c.prepareStatement(sql);
+                                preparedStmt.setString(1,nomTurno);
+                                preparedStmt.setString(2,nowDateTime);
+                                preparedStmt.setString(3,"");
+                                preparedStmt.setString(4,idEmpleado);
+                                preparedStmt.setString(5,login.codUsuario);
+                                preparedStmt.executeQuery();
+                            }
+                        }
+                        else if("Salida".equals(tipoAcceso))
+                        {
+                            //Valida si horaFin es empty
+                            sql = "SELECT * FROM ms_asistencia WHERE horaFin = '' AND ID_EMPLEADO = '"+idEmpleado+"' AND nombreTurno = '"+nomTurno+"'";
+                            System.out.println(sql);
+                            pstmt = c.prepareStatement(sql);
+                            rs = pstmt.executeQuery();
+                            if (rs.next() == true){
+                                
+                                //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
+                            }
+                            else
+                            {
+                                sql = "UPDATE ms_asistencia SET horaFin = ? WHERE nombreTurno = ? AND ID_EMPLEADO = ? AND DATE(horaInicio) = ?";
+                                PreparedStatement guardar = c.prepareStatement(sql);
+                                System.out.println(""+sql);
+                                guardar.setString(1, nowDateTime);
+                                guardar.setString(2, nomTurno);
+                                guardar.setString(3, idEmpleado);
+                                guardar.setString(4, nowDate);
+                                guardar.execute();
+                                guardar.close();
+                            }
+                        }
+                    }
+                    else //Si el empleado no pertence al turno validar si se da acceso con contraseña de super usuario
+                    {
+                        JOptionPane.showMessageDialog(null, "El empleado no pertence al turno", "Deces agrear aisistencia", JOptionPane.ERROR_MESSAGE);
+                    }
+                   
+                }
+                else
+                {
+                    //Si no encuentra alguna huella correspondiente al nombre lo indica con un mensaje
+                    JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
                 }
             }
-            //Si no encuentra alguna huella correspondiente al nombre lo indica con un mensaje
-            JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
+            
+            Reclutador.clear();
+            lblImagenHuella.setIcon(null);
+            stop();
+            EstadoHuellas();
             setTemplate(null);
+            //mensaje avisando que falló la wea
+            start();
         } catch (SQLException e) {
             //Si ocurre un error lo indica en la consola
             System.err.println("Error al identificar huella dactilar." + e.getMessage());
@@ -714,7 +786,6 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         featureinscripcion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_ENROLLMENT);
         featureverificacion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_VERIFICATION);
 
-        //System.out.println(data);
         if (featureinscripcion != null) 
         {
             try {
@@ -723,44 +794,10 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 Reclutador.addFeatures(featureinscripcion);
                 Image image = CrearImagenHuella(sample);
                 DibujarHuella(image);
-
-                // System.out.println("dddd"+sample+""+featureinscripcion);
-                // btnVerificar.setEnabled(true);
-                //   btnIdentificar.setEnabled(true);
+                
             } catch (DPFPImageQualityException ex) {
                 System.err.println("Error: " + ex.getMessage());
             } 
-            
-           /*finally {
-                EstadoHuellas();
-                switch (Reclutador.getTemplateStatus()) {
-                    case TEMPLATE_STATUS_READY:
-                        stop();
-                        setTemplate(Reclutador.getTemplate());
-                        EnviarTexto("La plantilla de la huella ha sido creada, ya puede verificarla o identificarla");
-                        try{
-                            
-                            ///no mal
-                            identificarHuella();
-                        }
-                        catch (IOException ex) {
-                            Logger.getLogger(reloj.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        //btnIdentificar.setEnabled(false);
-                        //btnVerificar.setEnabled(false);
-                        //btnGuardar.setEnabled(true);
-                        //btnGuardar.grabFocus();
-                        break;
-                    case TEMPLATE_STATUS_FAILED:
-                        Reclutador.clear();
-                        stop();
-                        EstadoHuellas();
-                        setTemplate(null);
-                        //mensaje avisando que falló la wea
-                        start();
-                        break;
-                }
-            }*/
         }
     }
     
