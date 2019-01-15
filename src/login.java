@@ -258,6 +258,7 @@ public class login extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    public static String idEmpresa;
     public static String nomEmpresa;
     public static String codUsuario;
     private void cmbEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbEmpresaActionPerformed
@@ -284,10 +285,11 @@ public class login extends javax.swing.JFrame {
         try
         {
             Connection conn = con.conectar();
-            String codUsuario = txtCodUsuario.getText();
+            codUsuario = txtCodUsuario.getText();
             String contrasenia = new String(txtContrasenia.getPassword());
             nomEmpresa = cmbEmpresa.getSelectedItem().toString();
-            String sql = "SELECT * FROM ms_usuario WHERE codigo = BINARY '"+codUsuario+"' AND contrasenia = '"+sha1(contrasenia)+"' AND estatus = 1";
+            getIdEmpresa(nomEmpresa);
+            String sql = "SELECT * FROM ms_usuario WHERE codigo = BINARY '"+codUsuario+"' AND contrasenia = '"+sha1(contrasenia)+"' AND superUsuario = 'Y' AND estatus = 1";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next() == true){
@@ -364,6 +366,24 @@ public class login extends javax.swing.JFrame {
         catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
+    }
+    public void getIdEmpresa(String nomEmpresa)
+    {
+        try
+        {
+            Connection conn = con.conectar();
+            String sql = "SELECT ID_EMPRESA FROM ms_empresa WHERE nombre = '"+nomEmpresa+"'";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next() == true)
+            {
+                idEmpresa = rs.getString("ID_EMPRESA");
+            }
+            
+        }catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+       
     }
     static String sha1(String input) throws NoSuchAlgorithmException {
         MessageDigest mDigest = MessageDigest.getInstance("SHA1");

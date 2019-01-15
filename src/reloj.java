@@ -26,6 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,6 +43,10 @@ import javax.swing.SwingUtilities;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -145,6 +151,9 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         lblTurno = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         lblAcceso = new javax.swing.JLabel();
+        lblCodigo1 = new javax.swing.JLabel();
+        lblCodigo2 = new javax.swing.JLabel();
+        lblCodigo3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -359,6 +368,18 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 .addContainerGap())
         );
 
+        lblCodigo1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        lblCodigo1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCodigo1.setText("NOMBRE DE EMPLEADO");
+
+        lblCodigo2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        lblCodigo2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCodigo2.setText("RFC DE EMPLEADO");
+
+        lblCodigo3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        lblCodigo3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCodigo3.setText("CÓDIGO DE EMPLEADO");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -380,7 +401,12 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                     .addComponent(lblNombre, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblCodigo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblRfc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblRfc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblCodigo1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(lblCodigo2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblCodigo3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -403,20 +429,27 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                 .addComponent(jLabel2)
                                 .addGap(18, 18, 18)
                                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 40, Short.MAX_VALUE))
+                        .addGap(18, 34, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(71, 71, 71)))
+                        .addGap(67, 67, 67)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblCodigo3, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(13, 13, 13)
+                        .addComponent(lblCodigo1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(70, 70, 70)
-                        .addComponent(lblRfc, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblImagenHuella, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblCodigo2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblRfc, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14))
+                    .addComponent(lblImagenHuella, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane2))
                 .addGap(29, 29, 29)
                 .addComponent(rSPanelsSlider3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -449,6 +482,8 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         formTurno.setLocationRelativeTo(null);
         this.setVisible(false);
         formTurno.setVisible(true);
+        h1.stop();
+        stop();
         //
     }//GEN-LAST:event_btnCerrarActionPerformed
 
@@ -464,7 +499,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         Iniciar();
         start();
         //Muestra el estatus del Lector
-        EstadoHuellas();
+        //EstadoHuellas();
     }//GEN-LAST:event_formWindowOpened
 
     /**
@@ -518,6 +553,8 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                         } catch (IOException ex) {
                             Logger.getLogger(reloj.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (SQLException ex) {
+                            Logger.getLogger(reloj.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (NoSuchAlgorithmException ex) {
                             Logger.getLogger(reloj.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
@@ -605,9 +642,9 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             Connection c = con.conectar(); //establece la conexion con la BD
             String sql = "SELECT * FROM ms_empleado WHERE codigo = ? AND ID_EMPRESA = ?";
 
-            System.out.println("" + sql);
+            /*System.out.println("" + sql);
             System.out.println("" + codigo);
-            System.out.println("" + idEmpresa);
+            System.out.println("" + idEmpresa);*/
 
             PreparedStatement pstmt = c.prepareStatement(sql);
             pstmt.setString(1, codigo);
@@ -645,17 +682,21 @@ public class reloj extends javax.swing.JFrame implements Runnable{
      * Verifica la huella digital actual contra otra en la base de datos
      */
     
-    public void identificarHuella() throws IOException, SQLException {
+    public void identificarHuella() throws IOException, SQLException, NoSuchAlgorithmException {
         try 
         {
             //Establece los valores para la sentencia SQL
+            String day = new SimpleDateFormat("HH:mm:ss").format(date);
+            String nowDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+            String nowDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
             String sql, idEmpleado, codigo, rfc,nombreEmpleado,horaInicio, horaFin, lun, mar, mie, jue, vie, sab, dom, minTolerancia;
             PreparedStatement pstmt;
             ResultSet rs;
             Connection c = con.conectar();
             
             //Se extraen datos del empleado para comparar con la huella
-            sql = "SELECT ID_EMPLEADO,codigo,nombre,apellidoPaterno AS ap,apellidoMaterno AS am,rfc,huella FROM ms_empleado";
+            System.out.println(login.idEmpresa);
+            sql = "SELECT ID_EMPLEADO,codigo,nombre,apellidoPaterno AS ap,apellidoMaterno AS am,rfc,huella FROM ms_empleado WHERE ID_EMPRESA = '"+login.idEmpresa+"'";
             pstmt = c.prepareStatement(sql);
             rs = pstmt.executeQuery();
             while (rs.next()) 
@@ -682,79 +723,183 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 //e indica el nombre de la persona que coincidió.
                 if (result.isVerified()) 
                 {
-                    
-                    sql = "SELECT * FROM ms_turno WHERE nombre = '"+nomTurno+"'";
-                    pstmt = c.prepareStatement(sql);
-                    rs = pstmt.executeQuery();
-                    if(rs.next())
-                    {
-                        
-                    }
                     lblCodigo.setText(codigo);
                     lblNombre.setText(nombreEmpleado);
                     lblRfc.setText(rfc);
-                    String nowDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-                    String nowDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
                     
                     //Valida si el empleado pertenece al turno
-                    sql = "SELECT * FROM ms_turno T0 LEFT JOIN ms_turnoempleado T1 ON T0.ID_TURNO = T1.ID_TURNO WHERE T0.nombre = '"+nomTurno+"' AND T1.ID_EMPLEADO = "+idEmpleado;
+                    sql = "SELECT T0.horaInicio,T0.horaFin,T0.lunes,T0.martes,T0.miercoles,T0.jueves,T0.viernes,T0.sabado,T0.domingo,T0.minTolerancia FROM ms_turno T0 LEFT JOIN ms_turnoempleado T1 ON T0.ID_TURNO = T1.ID_TURNO WHERE T0.nombre = '"+nomTurno+"' AND T1.ID_EMPLEADO = "+idEmpleado+" LIMIT 1";
                     System.out.println(sql);
                     pstmt = c.prepareStatement(sql);
                     rs = pstmt.executeQuery();
                     if (rs.next() == true)
                     {
+                        //Datos del Turno
+                        horaInicio = rs.getString("horaInicio");
+                        horaFin = rs.getString("horaFin");
+                        lun = rs.getString("lunes");
+                        mar = rs.getString("martes");
+                        mie = rs.getString("miercoles");
+                        jue = rs.getString("jueves");
+                        vie = rs.getString("viernes");
+                        sab = rs.getString("sabado");
+                        dom = rs.getString("domingo");
+                        minTolerancia = rs.getString("minTolerancia");
+                        
                         if("Entrada".equals(tipoAcceso))
                         {
                             //Valida si existe un registro con la fecha del día, antes de ingresar asistencia
-                            sql = "SELECT * FROM ms_asistencia WHERE DATE(horaInicio) = '"+nowDate+"' AND ID_EMPLEADO = '"+idEmpleado+"'";
+                            sql = "SELECT nombreTurno, DATE_FORMAT(hora, '%d-%m-%Y') AS fecha,DATE_FORMAT(hora,'%H:%i:%s') AS hora,(SELECT nombre FROM ms_usuario WHERE codigo = codigoUsuario) As usuario FROM ms_asistencia WHERE DATE(hora) = '"+nowDate+"' AND tipoAcceso = 'Entrada' AND ID_EMPLEADO = '"+idEmpleado+"' AND nombreTurno = '"+nomTurno+"'";
                             System.out.println(sql);
                             pstmt = c.prepareStatement(sql);
                             rs = pstmt.executeQuery();
                             if (rs.next() == true){
                                 
+                                String nombreTurno = rs.getString("nombreTurno");
+                                String fecha = rs.getString("fecha");
+                                String usuario = rs.getString("usuario");
+                                String horaIngreso = rs.getString("hora");
                                 //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
+                                JOptionPane.showMessageDialog(null, "Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "El empleado ya tiene un registro de Entrada", JOptionPane.INFORMATION_MESSAGE);
                             }
                             else
                             {
-                                sql = "INSERT INTO ms_asistencia(nombreTurno,horaInicio,horaFin,ID_EMPLEADO,codigoUsuario)";
-                                System.out.println(""+sql);
+                                sql = "INSERT INTO ms_asistencia(nombreTurno,hora,tipoAcceso,ID_EMPLEADO,codigoUsuario) VALUES (?,?,?,?,?)";
+                                System.out.println(""+sql+login.codUsuario);
                                 PreparedStatement preparedStmt = c.prepareStatement(sql);
                                 preparedStmt.setString(1,nomTurno);
                                 preparedStmt.setString(2,nowDateTime);
-                                preparedStmt.setString(3,"");
+                                preparedStmt.setString(3,"Entrada");
                                 preparedStmt.setString(4,idEmpleado);
                                 preparedStmt.setString(5,login.codUsuario);
-                                preparedStmt.executeQuery();
+                                preparedStmt.executeUpdate();
+                                preparedStmt.close();
                             }
                         }
                         else if("Salida".equals(tipoAcceso))
                         {
                             //Valida si horaFin es empty
-                            sql = "SELECT * FROM ms_asistencia WHERE horaFin = '' AND ID_EMPLEADO = '"+idEmpleado+"' AND nombreTurno = '"+nomTurno+"'";
+                            sql = "SELECT nombreTurno, DATE_FORMAT(hora, '%d-%m-%Y') AS fecha,DATE_FORMAT(hora,'%H:%i:%s') AS hora,(SELECT nombre FROM ms_usuario WHERE codigo = codigoUsuario) As usuario FROM ms_asistencia WHERE DATE(hora) = '"+nowDate+"' AND tipoAcceso = 'Salida' AND ID_EMPLEADO = '"+idEmpleado+"' AND nombreTurno = '"+nomTurno+"'";
                             System.out.println(sql);
                             pstmt = c.prepareStatement(sql);
                             rs = pstmt.executeQuery();
                             if (rs.next() == true){
                                 
+                                String nombreTurno = rs.getString("nombreTurno");
+                                String fecha = rs.getString("fecha");
+                                String usuario = rs.getString("usuario");
+                                String horaIngreso = rs.getString("hora");
                                 //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
+                                JOptionPane.showMessageDialog(null, "Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "El empleado ya tiene un registro de Salida", JOptionPane.INFORMATION_MESSAGE);
                             }
                             else
                             {
-                                sql = "UPDATE ms_asistencia SET horaFin = ? WHERE nombreTurno = ? AND ID_EMPLEADO = ? AND DATE(horaInicio) = ?";
-                                PreparedStatement guardar = c.prepareStatement(sql);
-                                System.out.println(""+sql);
-                                guardar.setString(1, nowDateTime);
-                                guardar.setString(2, nomTurno);
-                                guardar.setString(3, idEmpleado);
-                                guardar.setString(4, nowDate);
-                                guardar.execute();
-                                guardar.close();
+                                sql = "INSERT INTO ms_asistencia(nombreTurno,hora,tipoAcceso,ID_EMPLEADO,codigoUsuario) VALUES (?,?,?,?,?)";
+                                System.out.println(""+sql+login.codUsuario);
+                                PreparedStatement preparedStmt = c.prepareStatement(sql);
+                                preparedStmt.setString(1,nomTurno);
+                                preparedStmt.setString(2,nowDateTime);
+                                preparedStmt.setString(3,"Salida");
+                                preparedStmt.setString(4,idEmpleado);
+                                preparedStmt.setString(5,login.codUsuario);
+                                preparedStmt.executeUpdate();
+                                preparedStmt.close();
                             }
                         }
                     }
                     else //Si el empleado no pertence al turno validar si se da acceso con contraseña de super usuario
                     {
-                        JOptionPane.showMessageDialog(null, "El empleado no pertence al turno", "Deces agrear aisistencia", JOptionPane.ERROR_MESSAGE);
+                        String confirmacion = "0";
+                        //JOptionPane.showMessageDialog(null, "El empleado no pertence al turno", "Deces agrear aisistencia", JOptionPane.ERROR_MESSAGE);
+                        JPanel panel = new JPanel();
+                        JLabel label = new JLabel("Para agregar el reguistro se debe firmar con su contraseña de acceso.. \n");
+                        JPasswordField pwd = new JPasswordField(10);
+                        panel.add(label);
+                        panel.add(pwd);
+                        String[] options = new String[]{"OK", "Cancel"};
+                        int option = JOptionPane.showOptionDialog(null, panel,"El empleado no pertence al turno.", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                         null, options, options[1]);
+                        
+                        //System.out.println(option);
+                        if(option == 0)
+                        {
+                            String contrasenia = new String(pwd.getPassword());
+                            sql = "SELECT * FROM ms_usuario WHERE codigo = BINARY '"+login.codUsuario+"' AND contrasenia = '"+sha1(contrasenia)+"' AND estatus = 1";
+                            System.out.println(sql);
+                            pstmt = c.prepareStatement(sql);
+                            rs = pstmt.executeQuery();
+                            if (rs.next() == true){
+                               confirmacion = "1";
+                            }
+                            
+                            if("Entrada".equals(tipoAcceso) && "1".equals(confirmacion))
+                            {
+                                //Valida si existe un registro con la fecha del día, antes de ingresar asistencia
+                                sql = "SELECT nombreTurno, DATE_FORMAT(hora, '%d-%m-%Y') AS fecha,DATE_FORMAT(hora,'%H:%i:%s') AS hora,(SELECT nombre FROM ms_usuario WHERE codigo = codigoUsuario) As usuario FROM ms_asistencia WHERE DATE(hora) = '"+nowDate+"' AND tipoAcceso = 'Entrada' AND ID_EMPLEADO = '"+idEmpleado+"' AND nombreTurno = '"+nomTurno+"'";
+                                System.out.println(sql);
+                                pstmt = c.prepareStatement(sql);
+                                rs = pstmt.executeQuery();
+                                if (rs.next() == true){
+
+                                    String nombreTurno = rs.getString("nombreTurno");
+                                    String fecha = rs.getString("fecha");
+                                    String usuario = rs.getString("usuario");
+                                    String horaIngreso = rs.getString("hora");
+                                    //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
+                                    JOptionPane.showMessageDialog(null, "Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "El empleado ya tiene un registro de Entrada", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                else
+                                {
+                                    sql = "INSERT INTO ms_asistencia(nombreTurno,hora,tipoAcceso,ID_EMPLEADO,codigoUsuario,autorizacion) VALUES (?,?,?,?,?)";
+                                    System.out.println(""+sql+login.codUsuario);
+                                    PreparedStatement preparedStmt = c.prepareStatement(sql);
+                                    preparedStmt.setString(1,nomTurno);
+                                    preparedStmt.setString(2,nowDateTime);
+                                    preparedStmt.setString(3,"Entrada");
+                                    preparedStmt.setString(4,idEmpleado);
+                                    preparedStmt.setString(5,login.codUsuario);
+                                    preparedStmt.setString(6,"1");
+                                    preparedStmt.executeUpdate();
+                                    preparedStmt.close();
+                                }
+                            }
+                            else if("Salida".equals(tipoAcceso) && "1".equals(confirmacion))
+                            {
+                                //Valida si horaFin es empty
+                                sql = "SELECT nombreTurno, DATE_FORMAT(hora, '%d-%m-%Y') AS fecha,DATE_FORMAT(hora,'%H:%i:%s') AS hora,(SELECT nombre FROM ms_usuario WHERE codigo = codigoUsuario) As usuario FROM ms_asistencia WHERE DATE(hora) = '"+nowDate+"' AND tipoAcceso = 'Salida' AND ID_EMPLEADO = '"+idEmpleado+"' AND nombreTurno = '"+nomTurno+"'";
+                                System.out.println(sql);
+                                pstmt = c.prepareStatement(sql);
+                                rs = pstmt.executeQuery();
+                                if (rs.next() == true){
+
+                                    String nombreTurno = rs.getString("nombreTurno");
+                                    String fecha = rs.getString("fecha");
+                                    String usuario = rs.getString("usuario");
+                                    String horaIngreso = rs.getString("hora");
+                                    //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
+                                    JOptionPane.showMessageDialog(null, "Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "El empleado ya tiene un registro de Salida", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                else
+                                {
+                                    sql = "INSERT INTO ms_asistencia(nombreTurno,hora,tipoAcceso,ID_EMPLEADO,codigoUsuario,autorizacion) VALUES (?,?,?,?,?)";
+                                    System.out.println(""+sql+login.codUsuario);
+                                    PreparedStatement preparedStmt = c.prepareStatement(sql);
+                                    preparedStmt.setString(1,nomTurno);
+                                    preparedStmt.setString(2,nowDateTime);
+                                    preparedStmt.setString(3,"Salida");
+                                    preparedStmt.setString(4,idEmpleado);
+                                    preparedStmt.setString(5,login.codUsuario);
+                                    preparedStmt.setString(6,"1");
+                                    preparedStmt.executeUpdate();
+                                    preparedStmt.close();
+                                }
+                            }
+                        }
+                        else 
+                        {
+                            
+                        }
+                            //JOptionPane.showMessageDialog(null,"Your password is "+new String(pwd.getPassword()));
                     }
                    
                 }
@@ -766,12 +911,14 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             }
             
             Reclutador.clear();
-            lblImagenHuella.setIcon(null);
+            txtArea.setText(null);
+            //lblImagenHuella.setIcon(null);
             stop();
-            EstadoHuellas();
+            //EstadoHuellas();
             setTemplate(null);
             //mensaje avisando que falló la wea
             start();
+            
         } catch (SQLException e) {
             //Si ocurre un error lo indica en la consola
             System.err.println("Error al identificar huella dactilar." + e.getMessage());
@@ -852,6 +999,16 @@ public String datos(String codigoEmpleado){
     
     return codigoEmpleado;
 }
+static String sha1(String input) throws NoSuchAlgorithmException {
+        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = mDigest.digest(input.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < result.length; i++) {
+            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+         
+        return sb.toString();
+    }
 /*public void carga() throws SQLException, MalformedURLException{
     System.out.println("IMAGEN"+principal.codigoEmpleado);
     codigo =principal.codigoEmpleado;
@@ -890,6 +1047,9 @@ public String datos(String codigoEmpleado){
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblAcceso;
     private javax.swing.JLabel lblCodigo;
+    private javax.swing.JLabel lblCodigo1;
+    private javax.swing.JLabel lblCodigo2;
+    private javax.swing.JLabel lblCodigo3;
     private javax.swing.JLabel lblEmpresa;
     private javax.swing.JLabel lblHora;
     private javax.swing.JLabel lblImagenHuella;
