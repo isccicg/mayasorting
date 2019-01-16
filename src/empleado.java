@@ -628,7 +628,7 @@ public String datos(String codigoEmpleado){
     return codigoEmpleado;
 }
 public void carga() throws SQLException, MalformedURLException{
-    System.out.println("IMAGEN"+principal.codigoEmpleado);
+    //System.out.println("IMAGEN"+principal.codigoEmpleado);
     codigo =principal.codigoEmpleado;
     PreparedStatement ps = null;
             ResultSet rs = null;
@@ -646,24 +646,25 @@ public void carga() throws SQLException, MalformedURLException{
             
            try{
            
-            idEmpresa = rs.getString("ID_EMPRESA");
-          //  codigo =rs.getString("codigo");
-            System.out.println("" + idEmpresa);
-            
-            URL url = new URL("http://irm.ddns.me:81/mayasorting" + rutaImg.substring(2));
-            ImageIcon imagen = new ImageIcon(url);
-            Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(lblImg.getWidth(), lblImg.getHeight(), Image.SCALE_DEFAULT));
-            lblImg.setIcon(icono);
-            this.repaint(); 
+                idEmpresa = rs.getString("ID_EMPRESA");
+                System.out.println("" + idEmpresa);
+                if(rutaImg != null)
+                {
+                    URL url = new URL("http://irm.ddns.me:81/mayasorting" + rutaImg.substring(2));
+                    ImageIcon imagen = new ImageIcon(url);
+                    Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(lblImg.getWidth(), lblImg.getHeight(), Image.SCALE_DEFAULT));
+                    lblImg.setIcon(icono);
+                    this.repaint(); 
+                }
              
             }
            catch(Exception e){
            
                 stop();
-        principal formPrincipal = new principal();
-        formPrincipal.setLocationRelativeTo(null);
-        this.setVisible(false);
-        formPrincipal.setVisible(true);
+                principal formPrincipal = new principal();
+                formPrincipal.setLocationRelativeTo(null);
+                this.setVisible(false);
+                formPrincipal.setVisible(true);
           }      
                 
            

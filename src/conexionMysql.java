@@ -1,4 +1,7 @@
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -19,13 +22,20 @@ public class conexionMysql {
     Connection conn = null;
     
     public Connection conectar() 
-    {
+    { 
         try 
         {
+            String rutaCon = "";
+            File file = new File("C:\\config.txt"); 
+            BufferedReader br = new BufferedReader(new FileReader(file)); 
+            rutaCon = br.readLine();
+            System.out.println(rutaCon);
+            
             String dbName = "mayasorting";
             String dbUserName = "user_mayasorting";
             String dbPassword = "123456789";
-            String connectionString = "jdbc:mysql://irm.ddns.me:3306/" + dbName + "?user=" + dbUserName + "&password=" + dbPassword + "&useUnicode=true&characterEncoding=UTF-8";
+            String connectionString = "jdbc:mysql://"+rutaCon+":3306/" + dbName + "?user=" + dbUserName + "&password=" + dbPassword + "&useUnicode=true&characterEncoding=UTF-8";
+            System.out.println(connectionString);
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(connectionString);
 

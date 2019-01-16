@@ -18,6 +18,7 @@ import com.digitalpersona.onetouch.processing.DPFPFeatureExtraction;
 import com.digitalpersona.onetouch.processing.DPFPImageQualityException;
 import com.digitalpersona.onetouch.verification.DPFPVerification;
 import com.digitalpersona.onetouch.verification.DPFPVerificationResult;
+import com.sun.prism.paint.Color;
 //import static empleado.TEMPLATE_PROPERTY;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -695,8 +696,8 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             Connection c = con.conectar();
             
             //Se extraen datos del empleado para comparar con la huella
-            System.out.println(login.idEmpresa);
             sql = "SELECT ID_EMPLEADO,codigo,nombre,apellidoPaterno AS ap,apellidoMaterno AS am,rfc,huella FROM ms_empleado WHERE ID_EMPRESA = '"+login.idEmpresa+"'";
+            System.out.println(sql);
             pstmt = c.prepareStatement(sql);
             rs = pstmt.executeQuery();
             while (rs.next()) 
@@ -760,7 +761,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                 String usuario = rs.getString("usuario");
                                 String horaIngreso = rs.getString("hora");
                                 //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
-                                JOptionPane.showMessageDialog(null, "Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "El empleado ya tiene un registro de Entrada", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null,"<html><font color=#FF0000>El empleado ya tiene un registro de Entrada</font> \n"+"Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "Advertencia", JOptionPane.WARNING_MESSAGE);
                             }
                             else
                             {
@@ -790,7 +791,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                 String usuario = rs.getString("usuario");
                                 String horaIngreso = rs.getString("hora");
                                 //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
-                                JOptionPane.showMessageDialog(null, "Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "El empleado ya tiene un registro de Salida", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "<html><font color=#FF0000>El empleado ya tiene un registro de Salida</font> \n Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "Advertencia", JOptionPane.INFORMATION_MESSAGE);
                             }
                             else
                             {
@@ -806,6 +807,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                 preparedStmt.close();
                             }
                         }
+                        break;
                     }
                     else //Si el empleado no pertence al turno validar si se da acceso con contraseña de super usuario
                     {
