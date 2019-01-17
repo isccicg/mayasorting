@@ -44,6 +44,7 @@ import javax.swing.SwingUtilities;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -94,6 +95,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
         this.tipoAcceso = tipoAcceso;
         setLocationRelativeTo(null);//para centrar la ventana
         setVisible(true);
+        //this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
     private reloj() {

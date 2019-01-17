@@ -644,11 +644,11 @@ public void carga() throws SQLException, MalformedURLException{
             
               
             
-           try{
+          // try{
            
                 idEmpresa = rs.getString("ID_EMPRESA");
-                System.out.println("" + idEmpresa);
-                if(rutaImg != null)
+                System.out.println("" + rutaImg);
+                if(!rutaImg.equals(""))
                 {
                     URL url = new URL("http://irm.ddns.me:81/mayasorting" + rutaImg.substring(2));
                     ImageIcon imagen = new ImageIcon(url);
@@ -657,15 +657,15 @@ public void carga() throws SQLException, MalformedURLException{
                     this.repaint(); 
                 }
              
-            }
-           catch(Exception e){
+            //}
+           //catch(Exception e){
            
-                stop();
-                principal formPrincipal = new principal();
-                formPrincipal.setLocationRelativeTo(null);
-                this.setVisible(false);
-                formPrincipal.setVisible(true);
-          }      
+                //stop();
+                //principal formPrincipal = new principal();
+                //formPrincipal.setLocationRelativeTo(null);
+                //this.setVisible(false);
+                //formPrincipal.setVisible(true);
+          //}      
                 
            
 }
