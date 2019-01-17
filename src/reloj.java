@@ -901,6 +901,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                         {
                             
                         }
+                        break;
                             //JOptionPane.showMessageDialog(null,"Your password is "+new String(pwd.getPassword()));
                     }
                    
@@ -909,6 +910,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 {
                     //Si no encuentra alguna huella correspondiente al nombre lo indica con un mensaje
                     JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
+                    break;
                 }
             }
             
