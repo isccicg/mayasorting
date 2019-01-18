@@ -704,7 +704,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
             String day = new SimpleDateFormat("HH:mm:ss").format(date);
             String nowDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
             String nowDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
-            String sql, idEmpleado, codigo, rfc,nombreEmpleado,horaInicio, horaFin, lun, mar, mie, jue, vie, sab, dom, minTolerancia;
+            String sql, idEmpleado, codigo, rfc,nombreEmpleado,horaInicio, horaFin, lun, mar, mie, jue, vie, sab, dom, minTolerancia,bandera = "0";
             PreparedStatement pstmt;
             ResultSet rs;
             Connection c = con.conectar();
@@ -738,6 +738,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 //e indica el nombre de la persona que coincidió.
                 if (result.isVerified()) 
                 {
+                    bandera = "1";
                     lblCodigo.setText(codigo);
                     lblNombre.setText(nombreEmpleado);
                     lblRfc.setText(rfc);
@@ -777,6 +778,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                 stop();
                                 //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
                                 JOptionPane.showMessageDialog(null,"<html><font color=#FF0000>El empleado ya tiene un registro de Entrada</font> \n"+"Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "Advertencia", JOptionPane.WARNING_MESSAGE);
+                                break;
                             }
                             else
                             {
@@ -808,6 +810,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                 stop();
                                 //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
                                 JOptionPane.showMessageDialog(null, "<html><font color=#FF0000>El empleado ya tiene un registro de Salida</font> \n Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "Advertencia", JOptionPane.INFORMATION_MESSAGE);
+                                break;
                             }
                             else
                             {
@@ -823,7 +826,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                 preparedStmt.close();
                             }
                         }
-                        break;
+                        //break;
                     }
                     else //Si el empleado no pertence al turno validar si se da acceso con contraseña de super usuario
                     {
@@ -866,6 +869,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                     stop();
                                     //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
                                     JOptionPane.showMessageDialog(null, "Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "El empleado ya tiene un registro de Entrada", JOptionPane.INFORMATION_MESSAGE);
+                                    break;
                                 }
                                 else
                                 {
@@ -898,6 +902,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                                     stop();
                                     //Enviar msj de que el empleado ya fue registrado (fecha, hora de ingreso,usuario con el que fue ingresado)
                                     JOptionPane.showMessageDialog(null, "Turno: "+nombreTurno+"\n Fecha: "+fecha+" "+horaIngreso+" \n Usuario: "+usuario, "El empleado ya tiene un registro de Salida", JOptionPane.INFORMATION_MESSAGE);
+                                    break;
                                 }
                                 else
                                 {
@@ -919,7 +924,7 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                         {
                             //Si la confirmacion es Cancelada
                         }
-                        break;
+                        //break;
                             //JOptionPane.showMessageDialog(null,"Your password is "+new String(pwd.getPassword()));
                     }
                    
@@ -927,10 +932,18 @@ public class reloj extends javax.swing.JFrame implements Runnable{
                 else
                 {
                     //Si no encuentra alguna huella correspondiente al nombre lo indica con un mensaje
-                    stop();
-                    JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
-                    break;
+                    //stop();
+                    //JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
+                    //return;
+                    //break;
                 }
+            }
+            if(bandera.equals("0"))
+            {
+                lblCodigo.setText("");
+                lblNombre.setText("");
+                lblRfc.setText("");
+                JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
             }
             
             Reclutador.clear();

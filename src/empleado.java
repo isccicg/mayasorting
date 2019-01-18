@@ -20,8 +20,11 @@ import com.digitalpersona.onetouch.verification.DPFPVerification;
 import com.digitalpersona.onetouch.verification.DPFPVerificationResult;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -313,6 +316,8 @@ public class empleado extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(empleado.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MalformedURLException ex) {
+            Logger.getLogger(empleado.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(empleado.class.getName()).log(Level.SEVERE, null, ex);
         }
         //dato();
@@ -627,7 +632,7 @@ public String datos(String codigoEmpleado){
     
     return codigoEmpleado;
 }
-public void carga() throws SQLException, MalformedURLException{
+public void carga() throws SQLException, MalformedURLException, FileNotFoundException, IOException{
     //System.out.println("IMAGEN"+principal.codigoEmpleado);
     codigo =principal.codigoEmpleado;
     PreparedStatement ps = null;
@@ -650,7 +655,12 @@ public void carga() throws SQLException, MalformedURLException{
                 System.out.println("" + rutaImg);
                 if(!rutaImg.equals(""))
                 {
-                    URL url = new URL("http://irm.ddns.me:81/mayasorting" + rutaImg.substring(2));
+                    String rutaCon = "";
+                    File file = new File("C:\\config.txt"); 
+                    BufferedReader br = new BufferedReader(new FileReader(file)); 
+                    rutaCon = br.readLine();
+                    System.out.println(rutaCon);
+                    URL url = new URL("http://"+rutaCon+":81/mayasorting" + rutaImg.substring(2));
                     ImageIcon imagen = new ImageIcon(url);
                     Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(lblImg.getWidth(), lblImg.getHeight(), Image.SCALE_DEFAULT));
                     lblImg.setIcon(icono);
